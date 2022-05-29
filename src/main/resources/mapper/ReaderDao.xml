@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wrr.dao.ReaderDao">
+
+    <select id="showAllReaders" resultMap="allReaders">
+        SELECT *FROM reader;
+    </select>
+
+    <select id="selectOneReader" parameterType="java.lang.String" resultMap="allReaders">
+        SELECT *FROM reader where readerName=#{readerName};
+    </select>
+
+
+    <resultMap id="allReaders" type="reader">
+        <id property="readerId" column="readerId"/>
+        <result property="readerName" column="readerName"/>
+        <result property="readerPassword" column="readerPassword"/>
+        <result property="registerDate" column="registerDate"/>
+        <result property="borrowCartoon" column="borrowCartoon"/>
+        <result property="borrowNovel" column="borrowNovel"/>
+        <result property="notYetCartoon" column="notYetCartoon"/>
+        <result property="notYetNovel" column="notYetNovel"/>
+    </resultMap>
+
+
+    <insert id="insertOneReader" parameterType="reader">
+        INSERT INTO reader(readerName,readerPassword,registerDate)
+        VALUES (#{readerName},#{readerPassword},curdate())
+    </insert>
+
+    <update id="updateOneReader" parameterType="java.lang.String">
+        UPDATE reader SET readerName=#{newReaderName},
+                         readerPassword=#{newPassword}
+        WHERE readerName=#{oldReaderName}
+    </update>
+
+    <delete id="deleteOneReader" parameterType="reader">
+        DELETE FROM reader WHERE readerId=#{readerId}
+                              OR readerName=#{readerName}
+                              OR readerPassword=#{readerPassword}
+    </delete>
+
+</mapper>

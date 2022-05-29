@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wrr.dao.NovelDao">
+    <select id="showAllNovels" resultMap="allNovels">
+        SELECT *FROM novel;
+    </select>
+    <select id="showSexOfNovels" parameterType="java.lang.String" resultMap="allNovels">
+        SELECT *FROM novel WHERE novelClassOfSex=#{typeOfSex};
+    </select>
+    <select id="showStoryOfNovels" parameterType="java.lang.String" resultMap="allNovels">
+        SELECT *FROM novel WHERE novelClassOfStory=#{novelClass};
+    </select>
+
+    <select id="selectOneNovel" parameterType="java.lang.String" resultMap="allNovels">
+        select * from novel where novelName like '%${novelName}%'
+    </select>
+
+    <!--    根据点击量查询出来前五名的书籍信息-->
+    <select id="novelReadingVolume" parameterType="java.lang.String" resultMap="allNovels">
+        select * from novel order by novelReadingVolume desc limit 5;
+    </select>
+    <select id="selectNovel" resultMap="books">
+        SELECT novelClassOfStory AS classOfStory,sum(novelReadingVolume) AS volumeSum
+        FROM `novel` GROUP BY novelClassOfStory
+    </select>
+
+    <resultMap id="books" type="book">
+        <result property="classOfStory" column="classOfStory"/>
+        <result property="volumeSum" column="volumeSum"/>
+    </resultMap>
+
+
+    <resultMap id="allNovels" type="novel">
+        <id property="novelId" column="novelId"/>
+        <result property="novelName" column="novelName"/>
+        <result property="novelAuthor" column="novelAuthor"/>
+        <result property="novelSynopsis" column="novelSynopsis"/>
+        <result property="novelCover" column="novelCover"/>
+        <result property="novelReadingVolume" column="novelReadingVolume"/>
+    </resultMap>
+
+
+    <insert id="insertOneNovel" parameterType="novel">
+        INSERT INTO novel(novelName,novelAuthor,novelCover,novelSynopsis,novelClassOfSex,novelClassOfStory)
+        VALUES (#{novelName},#{novelAuthor},#{novelCover},#{novelSynopsis},#{novelClassOfSex},#{novelClassOfStory})
+    </insert>
+
+    <update id="updateOneNovel" parameterType="java.lang.String">
+        UPDATE novel SET novelName=#{updateNovelName},
+                         novelAuthor=#{updateNovelAuthor},
+                         novelCover=#{updateNovelCover},
+                         novelSynopsis=#{updateNovelSynopsis},
+                         novelClassOfSex=#{updateNovelClassOfSex},
+                         novelClassOfStory=#{updateNovelClassOfStory}
+        WHERE novelName=#{oldNovelName}
+    </update>
+
+    <!--    更新的操作，每次点击加入书架都会，点击量+1-->
+    <update id="updateVolume" parameterType="novel">
+        update novel set novelReadingVolume =novelReadingVolume+1 where novelName=#{novelName};
+    </update>
+
+
+    <delete id="deleteOneNovel" parameterType="novel">
+        DELETE FROM novel WHERE novelName=#{novelName}
+
+
+    </delete>
+</mapper>

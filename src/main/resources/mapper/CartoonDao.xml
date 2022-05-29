@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wrr.dao.CartoonDao">
+
+    <select id="showAllCartoons" resultMap="allCartoons">
+        SELECT *FROM cartoon;
+    </select>
+    <select id="showSexOfCartoons" parameterType="java.lang.String" resultMap="allCartoons">
+        SELECT *FROM cartoon WHERE cartoonClassOfSex=#{typeOfSex};
+    </select>
+    <select id="showStoryOfCartoons" parameterType="java.lang.String" resultMap="allCartoons">
+        SELECT *FROM cartoon WHERE cartoonClassOfStory=#{cartoonClass};
+    </select>
+
+    <!--    模糊查询单本漫画-->
+    <select id="selectOneCartoon" parameterType="java.lang.String" resultMap="allCartoons">
+        select * from cartoon where cartoonName like '%${cartoonName}%'
+    </select>
+
+
+
+    <!--    根据点击量查询出来前五名的漫画信息-->
+    <select id="cartoonReadingVolume" parameterType="java.lang.String" resultMap="allCartoons">
+        select * from cartoon order by cartoonReadingVolume desc limit 5;
+    </select>
+
+
+    <select id="selectStoryOfCartoon" resultMap="books">
+        SELECT cartoonClassOfStory AS classOfStory,sum(cartoonReadingVolume) AS volumeSum
+        FROM `cartoon` GROUP BY cartoonClassOfStory
+    </select>
+
+    <resultMap id="books" type="book">
+        <result property="classOfStory" column="classOfStory"/>
+        <result property="volumeSum" column="volumeSum"/>
+    </resultMap>
+
+
+    <resultMap id="allCartoons" type="cartoon">
+        <id property="cartoonId" column="cartoonId"/>
+        <result property="cartoonName" column="cartoonName"/>
+        <result property="cartoonAuthor" column="cartoonAuthor"/>
+        <result property="cartoonSynopsis" column="cartoonSynopsis"/>
+        <result property="cartoonCover" column="cartoonCover"/>
+        <result property="cartoonReadingVolume" column="cartoonReadingVolume"/>
+    </resultMap>
+
+
+    <insert id="insertOneCartoon" parameterType="cartoon">
+        INSERT INTO cartoon(cartoonName,cartoonAuthor,cartoonCover,cartoonSynopsis,cartoonClassOfSex,cartoonClassOfStory)
+        VALUES (#{cartoonName},#{cartoonAuthor},#{cartoonCover},#{cartoonSynopsis},#{cartoonClassOfSex},#{cartoonClassOfStory})
+    </insert>
+
+    <update id="updateOneCartoon" parameterType="java.lang.String">
+        UPDATE cartoon SET cartoonName=#{updateCartoonName},
+                           cartoonAuthor=#{updateCartoonAuthor},
+                           cartoonCover=#{updateCartoonCover},
+                           cartoonSynopsis=#{updateCartoonSynopsis},
+                           cartoonClassOfSex=#{updateCartoonClassOfSex},
+                           cartoonClassOfStory=#{updateCartoonClassOfStory}
+        WHERE cartoonName=#{oldCartoonName}
+    </update>
+
+
+    <!--    更新的操作，每次点击加入书架都会，点击量+1-->
+    <update id="updateVolume" parameterType="cartoon">
+        update cartoon set cartoonReadingVolume =novelReadingVolume+1 where cartoonName=#{cartoonName};
+    </update>
+
+    <delete id="deleteOneCartoon" parameterType="cartoon">
+        DELETE FROM cartoon WHERE cartoonName=#{cartoonName}
+    </delete>
+</mapper>

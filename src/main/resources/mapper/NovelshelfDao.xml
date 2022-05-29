@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wrr.dao.NovelshelfDao">
+
+    <select id="SelectBookByName" resultMap="books">
+        SELECT *FROM novelshelf where readName=#{readName};
+    </select>
+
+
+    <select id="selectOneBook" resultMap="books">
+        SELECT *FROM novelshelf where bookName=#{bookName};
+    </select>
+
+
+<!--这里的查询是根据人名查询这个人的书架里面有没有添加书籍-->
+    <select id="selectOneBookByReadName" resultMap="books">
+        SELECT *FROM novelshelf where bookName=#{bookName} AND readName=#{readName};
+    </select>
+
+    <resultMap id="books" type="novelshelf">
+        <id property="bookName" column="bookName"/>
+        <result property="bookType" column="bookType"/>
+        <result property="bookCover" column="bookCover"/>
+        <result property="bookAuthor" column="bookAuthor"/>
+        <result property="readName" column="readName"/>
+    </resultMap>
+
+
+    <insert id="insertOneBook" parameterType="novelshelf">
+        INSERT INTO novelshelf(bookName,bookType,bookCover,bookAuthor,readName)
+        VALUES (#{bookName},#{bookType},#{bookCover},#{bookAuthor},#{readName})
+    </insert>
+
+    <delete id="deleteOneBook" parameterType="bookshelf">
+        DELETE FROM bookshelf
+        WHERE
+            bookType=#{bookType} AND bookId=#{bookId}
+    </delete>
+<!--    批量删除书籍-->
+    <delete id="deleteSomeBooks" parameterType="bookshelf">
+        DELETE FROM novelshelf  WHERE  bookId=#{bookId}
+    </delete>
+
+
+    <!--<update id="updateOneBook" parameterType="com.nbr.model.Bookshelf">
+        UPDATE bookshelf SET bookName=#{bookName},
+                             bookType=#{bookType},
+                             bookCover=#{bookCover},
+                             bookAuthor=#{bookAuthor}
+        WHERE bookType=#{bookType} AND bookId=#{bookId}
+    </update>-->
+</mapper>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wrr.dao.BookshelfDao">
+
+    <select id="showCartoons" resultMap="books">
+        SELECT *FROM bookshelf where bookType='漫画类';
+    </select>
+    <select id="showNovels" resultMap="books">
+        SELECT *FROM bookshelf where bookType='小说类';
+    </select>
+    <resultMap id="books" type="bookshelf">
+        <id property="bookName" column="bookName"/>
+        <result property="bookType" column="bookType"/>
+        <result property="bookCover" column="bookCover"/>
+        <result property="bookAuthor" column="bookAuthor"/>
+    </resultMap>
+
+
+    <insert id="addOneBook" parameterType="bookshelf">
+        INSERT INTO bookshelf(bookName,bookType,bookCover,bookAuthor)
+        VALUES (#{bookName},#{bookType},#{bookCover},#{bookAuthor})
+    </insert>
+
+    <delete id="deleteOneBook" parameterType="bookshelf">
+        DELETE FROM bookshelf
+        WHERE
+            bookType=#{bookType} AND bookId=#{bookId}
+    </delete>
+
+    <!--<update id="updateOneBook" parameterType="com.nbr.model.Bookshelf">
+        UPDATE bookshelf SET bookName=#{bookName},
+                             bookType=#{bookType},
+                             bookCover=#{bookCover},
+                             bookAuthor=#{bookAuthor}
+        WHERE bookType=#{bookType} AND bookId=#{bookId}
+    </update>-->
+</mapper>

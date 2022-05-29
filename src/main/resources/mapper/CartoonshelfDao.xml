@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wrr.dao.CartoonshelfDao">
+
+    <select id="SelectCartoonByName" resultMap="books">
+        SELECT *FROM cartoonshelf where readName=#{readName};
+    </select>
+
+
+    <select id="selectOneCartoon" resultMap="books">
+        SELECT *FROM cartoonshelf where cartoonName=#{cartoonName};
+    </select>
+
+
+    <select id="selectOneCartoonByReadName" resultMap="books">
+        SELECT *FROM cartoonshelf where cartoonName=#{cartoonName} AND readName=#{readName};
+
+    </select>
+
+    <resultMap id="books" type="cartoonshelf">
+        <id property="cartoonName" column="cartoonName"/>
+        <result property="cartoonType" column="cartoonType"/>
+        <result property="cartoonCover" column="cartoonCover"/>
+        <result property="cartoonAuthor" column="cartoonAuthor"/>
+        <result property="readName" column="readName"/>
+    </resultMap>
+
+
+    <insert id="insertOneCartoon" parameterType="cartoonshelf">
+        INSERT INTO cartoonshelf(cartoonName,cartoonType,cartoonCover,cartoonAuthor,readName)
+        VALUES (#{cartoonName},#{cartoonType},#{cartoonCover},#{cartoonAuthor},#{readName})
+    </insert>
+
+    <delete id="deleteOneCartoon" parameterType="cartoonshelf">
+        DELETE FROM cartoonshelf
+        WHERE
+            bookType=#{bookType} AND bookId=#{bookId}
+    </delete>
+
+    <!--    批量删除书籍-->
+    <delete id="deleteSomeCartoons" parameterType="cartoonshelf">
+        DELETE FROM cartoonshelf  WHERE  cartoonId=#{cartoonId}
+    </delete>
+
+    <!--<update id="updateOneBook" parameterType="com.nbr.model.Bookshelf">
+        UPDATE bookshelf SET bookName=#{bookName},
+                             bookType=#{bookType},
+                             bookCover=#{bookCover},
+                             bookAuthor=#{bookAuthor}
+        WHERE bookType=#{bookType} AND bookId=#{bookId}
+    </update>-->
+</mapper>
